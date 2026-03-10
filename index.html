@@ -4,81 +4,260 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Streetlite Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+:root {
+  --bg: #f5f5f7;
+  --card: #ffffff;
+  --border: rgba(0,0,0,0.06);
+  --border-strong: rgba(0,0,0,0.1);
+  --text-primary: #1d1d1f;
+  --text-secondary: #6e6e73;
+  --text-tertiary: #86868b;
+  --accent: #0071e3;
+  --accent-hover: #0077ED;
+  --green: #34c759;
+  --green-bg: rgba(52,199,89,0.08);
+  --red: #ff3b30;
+  --red-bg: rgba(255,59,48,0.06);
+  --yellow: #ff9f0a;
+  --yellow-bg: rgba(255,159,10,0.06);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+  --radius: 14px;
+  --radius-sm: 10px;
+  --radius-xs: 8px;
+  --font: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: 'JetBrains Mono', 'SF Mono', monospace;
+}
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: Inter, sans-serif; background: #f8fafc; min-height: 100vh; }
-.header { background: white; border-bottom: 1px solid #e2e8f0; padding: 0 28px; }
-.header-inner { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; height: 58px; gap: 24px; }
-.logo { display: flex; align-items: center; gap: 8px; }
-.logo-text { font-weight: 700; font-size: 17px; color: #1e293b; }
-.live-badge { font-size: 10px; color: #22c55e; background: #f0fdf4; padding: 2px 7px; border-radius: 10px; font-weight: 600; }
-.tabs { display: flex; gap: 2px; flex: 1; justify-content: center; }
-.tab { padding: 6px 18px; border-radius: 6px; border: none; cursor: pointer; font-size: 13px; font-weight: 500; background: transparent; color: #64748b; }
-.tab.active { background: #2563eb; color: white; }
-.refresh-btn { font-size: 12px; color: #64748b; background: #f1f5f9; border: none; border-radius: 6px; padding: 6px 12px; cursor: pointer; }
-.content { max-width: 1400px; margin: 0 auto; padding: 24px 28px; }
-.kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 20px; }
-.kpi-card { background: white; border-radius: 12px; padding: 18px 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
-.kpi-icon { font-size: 18px; margin-bottom: 6px; }
-.kpi-value { font-size: 21px; font-weight: 700; color: #1e293b; }
-.kpi-label { font-size: 11px; color: #94a3b8; margin-top: 3px; }
-.alert { border-radius: 10px; padding: 11px 18px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
-.alert-red { background: #fef2f2; border: 1px solid #fecaca; }
-.alert-yellow { background: #fffbeb; border: 1px solid #fde68a; }
-.alert-red span.msg { font-weight: 600; color: #dc2626; font-size: 13px; }
-.alert-yellow span.msg { font-weight: 600; color: #d97706; font-size: 13px; }
-.alert span.arrow { margin-left: auto; font-size: 12px; }
-.card { background: white; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); overflow: hidden; }
-.card-header { padding: 14px 20px; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; }
-.card-title { font-size: 15px; font-weight: 600; color: #1e293b; }
-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-th { padding: 9px 14px; text-align: left; font-weight: 600; color: #64748b; white-space: nowrap; background: #f8fafc; cursor: pointer; }
-td { padding: 9px 14px; border-top: 1px solid #f1f5f9; }
-.green { color: #16a34a; } .red { color: #dc2626; } .blue { color: #2563eb; }
-.mono { font-family: monospace; font-size: 11px; }
-.status-red { color: #ef4444; font-weight: 600; font-size: 11px; }
-.status-yellow { color: #f59e0b; font-weight: 600; font-size: 11px; }
-.status-green { color: #22c55e; font-weight: 600; font-size: 11px; }
-.row-red { background: #fef2f2; }
-.row-yellow { background: #fffbeb; }
-.restock-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 20px; }
-.restock-card { border-radius: 12px; padding: 18px 22px; }
-.restock-value { font-size: 26px; font-weight: 700; }
-.restock-label { font-size: 12px; margin-top: 3px; }
-.search-input { margin-left: auto; padding: 7px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px; width: 260px; }
-.bar-row { margin-bottom: 18px; }
-.bar-label { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px; font-weight: 500; color: #1e293b; }
-.bar-track { height: 8px; background: #f1f5f9; border-radius: 4px; overflow: hidden; }
-.bar-fill { height: 100%; background: #2563eb; border-radius: 4px; }
-.chat-box { max-width: 700px; margin: 0 auto; }
-.chat-card { background: white; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); padding: 24px; margin-bottom: 14px; }
-.chat-input-row { display: flex; gap: 8px; margin-bottom: 14px; }
-.chat-input { flex: 1; padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; }
-.ask-btn { padding: 10px 20px; background: #2563eb; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
-.chat-answer { background: #f8fafc; border-radius: 8px; padding: 16px; font-size: 13px; color: #1e293b; line-height: 1.7; white-space: pre-wrap; }
-.suggestions { display: flex; flex-wrap: wrap; gap: 8px; }
-.suggestion { padding: 7px 14px; background: white; border: 1px solid #e2e8f0; border-radius: 20px; font-size: 12px; color: #64748b; cursor: pointer; }
-.loading { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 16px; }
-.error-box { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-.error-card { background: white; border-radius: 16px; padding: 40px; max-width: 500px; text-align: center; }
+html { -webkit-font-smoothing: antialiased; }
+body { font-family: var(--font); background: var(--bg); min-height: 100vh; color: var(--text-primary); }
+
+.header {
+  background: rgba(255,255,255,0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 100;
+}
+.header-inner {
+  max-width: 1320px; margin: 0 auto;
+  display: flex; align-items: center; height: 52px;
+  padding: 0 32px; gap: 20px;
+}
+.logo { display: flex; align-items: center; gap: 10px; min-width: 180px; }
+.logo-icon {
+  width: 28px; height: 28px; border-radius: 7px;
+  background: linear-gradient(135deg, var(--accent), #5856d6);
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 14px; font-weight: 700;
+}
+.logo-text { font-weight: 600; font-size: 15px; letter-spacing: -0.3px; }
+.live-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--green);
+  box-shadow: 0 0 6px rgba(52,199,89,0.5);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+.nav { display: flex; gap: 2px; flex: 1; justify-content: center; }
+.nav-btn {
+  padding: 6px 16px; border-radius: 980px; border: none; cursor: pointer;
+  font-size: 13px; font-weight: 500; font-family: var(--font);
+  background: transparent; color: var(--text-secondary); transition: all 0.2s;
+}
+.nav-btn:hover { color: var(--text-primary); background: rgba(0,0,0,0.04); }
+.nav-btn.active { background: var(--text-primary); color: white; }
+
+.header-right { display: flex; align-items: center; gap: 12px; min-width: 180px; justify-content: flex-end; }
+.meta-text { font-size: 11px; color: var(--text-tertiary); }
+.refresh-btn {
+  width: 32px; height: 32px; border-radius: 50%; border: none;
+  background: rgba(0,0,0,0.04); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; transition: all 0.2s; color: var(--text-secondary);
+}
+.refresh-btn:hover { background: rgba(0,0,0,0.08); transform: rotate(45deg); }
+
+.ai-bar-wrapper { max-width: 1320px; margin: 0 auto; padding: 20px 32px 0; }
+.ai-bar {
+  background: var(--card); border: 1px solid var(--border-strong);
+  border-radius: 16px; box-shadow: var(--shadow-sm);
+  display: flex; align-items: center; gap: 12px;
+  padding: 4px 4px 4px 20px; transition: all 0.3s;
+}
+.ai-bar:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,113,227,0.12), var(--shadow-md); }
+.ai-bar-icon { font-size: 16px; color: var(--text-tertiary); flex-shrink: 0; }
+.ai-bar input {
+  flex: 1; border: none; outline: none; font-size: 15px;
+  font-family: var(--font); color: var(--text-primary); background: transparent;
+  font-weight: 400; letter-spacing: -0.2px;
+}
+.ai-bar input::placeholder { color: var(--text-tertiary); }
+.ai-bar-btn {
+  padding: 10px 20px; border-radius: 12px; border: none;
+  background: var(--text-primary); color: white;
+  font-size: 13px; font-weight: 600; font-family: var(--font);
+  cursor: pointer; transition: all 0.2s; white-space: nowrap;
+}
+.ai-bar-btn:hover { background: #333; }
+.ai-bar-btn:disabled { opacity: 0.4; cursor: default; }
+.ai-suggestions { display: flex; gap: 6px; flex-wrap: wrap; padding: 10px 32px 0; max-width: 1320px; margin: 0 auto; }
+.ai-chip {
+  padding: 5px 12px; border-radius: 980px; border: 1px solid var(--border-strong);
+  background: var(--card); font-size: 12px; color: var(--text-secondary);
+  cursor: pointer; font-family: var(--font); transition: all 0.15s;
+}
+.ai-chip:hover { background: var(--text-primary); color: white; border-color: var(--text-primary); }
+.ai-answer-box { max-width: 1320px; margin: 0 auto; padding: 12px 32px 0; display: none; }
+.ai-answer-box.visible { display: block; }
+.ai-answer-content {
+  background: var(--card); border-radius: var(--radius);
+  padding: 20px 24px; font-size: 14px; line-height: 1.7;
+  color: var(--text-primary); box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border); white-space: pre-wrap; position: relative;
+}
+.ai-answer-label {
+  font-size: 11px; font-weight: 600; color: var(--accent);
+  text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;
+}
+.ai-close {
+  position: absolute; top: 16px; right: 16px;
+  width: 24px; height: 24px; border-radius: 50%;
+  border: none; background: rgba(0,0,0,0.05); cursor: pointer;
+  font-size: 12px; display: flex; align-items: center; justify-content: center;
+  color: var(--text-tertiary); transition: all 0.15s;
+}
+.ai-close:hover { background: rgba(0,0,0,0.1); }
+
+.content { max-width: 1320px; margin: 0 auto; padding: 20px 32px 40px; }
+
+.kpi-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; margin-bottom: 16px; }
+.kpi-card {
+  background: var(--card); border-radius: var(--radius);
+  padding: 20px 22px; border: 1px solid var(--border); transition: all 0.2s;
+}
+.kpi-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.kpi-label { font-size: 12px; color: var(--text-tertiary); font-weight: 500; margin-bottom: 8px; }
+.kpi-value { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
+
+.alert-banner {
+  border-radius: var(--radius-sm); padding: 12px 18px; margin-bottom: 10px;
+  display: flex; align-items: center; gap: 10px; cursor: pointer;
+  transition: all 0.15s; border: 1px solid transparent;
+}
+.alert-banner:hover { transform: translateX(2px); }
+.alert-red { background: var(--red-bg); border-color: rgba(255,59,48,0.12); }
+.alert-yellow { background: var(--yellow-bg); border-color: rgba(255,159,10,0.12); }
+.alert-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.alert-dot-red { background: var(--red); }
+.alert-dot-yellow { background: var(--yellow); }
+.alert-msg { font-weight: 500; font-size: 13px; letter-spacing: -0.1px; }
+.alert-arrow { margin-left: auto; font-size: 12px; color: var(--text-tertiary); }
+
+.card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; }
+.card-header { padding: 16px 22px; display: flex; align-items: center; border-bottom: 1px solid var(--border); }
+.card-title { font-size: 15px; font-weight: 600; letter-spacing: -0.2px; }
+.period-tag {
+  font-size: 11px; color: var(--text-tertiary); background: rgba(0,0,0,0.03);
+  padding: 3px 9px; border-radius: 6px; margin-left: 10px; font-weight: 500;
+}
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th {
+  padding: 10px 18px; text-align: left; font-weight: 500;
+  color: var(--text-tertiary); font-size: 12px;
+  background: rgba(0,0,0,0.015); white-space: nowrap; cursor: pointer;
+  border-bottom: 1px solid var(--border);
+}
+th:hover { color: var(--text-primary); }
+td { padding: 10px 18px; border-bottom: 1px solid rgba(0,0,0,0.03); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(0,0,0,0.01); }
+.text-green { color: var(--green); }
+.text-red { color: var(--red); }
+.text-accent { color: var(--accent); }
+.text-bold { font-weight: 600; }
+.text-ellipsis { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+a.asin-link, a.sku-link {
+  color: var(--accent); text-decoration: none; font-family: var(--mono); font-size: 12px; transition: color 0.15s;
+}
+a.asin-link:hover, a.sku-link:hover { text-decoration: underline; }
+
+.status-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 10px; border-radius: 980px; font-size: 11px; font-weight: 600;
+}
+.pill-red { background: var(--red-bg); color: var(--red); }
+.pill-yellow { background: var(--yellow-bg); color: var(--yellow); }
+.pill-green { background: var(--green-bg); color: var(--green); }
+.row-critical td { background: rgba(255,59,48,0.02); }
+.row-warning td { background: rgba(255,159,10,0.02); }
+
+.restock-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 16px; }
+.restock-stat { border-radius: var(--radius); padding: 20px 22px; border: 1px solid var(--border); }
+.restock-stat-value { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+.restock-stat-label { font-size: 12px; margin-top: 4px; font-weight: 500; }
+
+.search-input {
+  margin-left: auto; padding: 8px 14px;
+  border: 1px solid var(--border-strong); border-radius: var(--radius-xs);
+  font-size: 13px; font-family: var(--font); width: 260px; outline: none; transition: all 0.2s;
+}
+.search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,113,227,0.1); }
+
+.brand-row { margin-bottom: 16px; }
+.brand-info { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.brand-name { font-size: 14px; font-weight: 500; }
+.brand-value { font-size: 14px; font-weight: 700; }
+.brand-track { height: 6px; background: rgba(0,0,0,0.04); border-radius: 3px; overflow: hidden; }
+.brand-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #5856d6); border-radius: 3px; }
+
+.loading-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 16px; }
+.loading-spinner {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 3px solid var(--border); border-top-color: var(--accent);
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: 14px; color: var(--text-secondary); font-weight: 500; }
+
+.error-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+.error-card { background: var(--card); border-radius: 20px; padding: 48px; max-width: 420px; text-align: center; box-shadow: var(--shadow-lg); }
+.error-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+.error-msg { color: var(--text-secondary); font-size: 14px; margin-bottom: 24px; line-height: 1.5; }
+.error-btn {
+  padding: 12px 28px; background: var(--accent); color: white;
+  border: none; border-radius: 980px; font-weight: 600; font-size: 14px;
+  cursor: pointer; font-family: var(--font); transition: all 0.2s;
+}
+.error-btn:hover { background: var(--accent-hover); }
+
 .hidden { display: none; }
 .overflow-x { overflow-x: auto; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.animate-in { animation: fadeUp 0.4s ease both; }
+.delay-1 { animation-delay: 0.05s; }
+.delay-2 { animation-delay: 0.1s; }
+.delay-3 { animation-delay: 0.15s; }
 </style>
 </head>
 <body>
 
-<div id="loading" class="loading">
-  <div style="font-size:40px">📦</div>
-  <div style="font-size:16px;font-weight:600;color:#1e293b">Streetlite Dashboard</div>
-  <div id="loading-msg" style="font-size:14px;color:#64748b">Loading sales data...</div>
+<div id="loading" class="loading-screen">
+  <div class="loading-spinner"></div>
+  <div class="loading-text" id="loading-msg">Loading sales data...</div>
 </div>
 
-<div id="error-screen" class="error-box hidden">
+<div id="error-screen" class="error-screen hidden">
   <div class="error-card">
-    <div style="font-size:36px;margin-bottom:12px">⚠️</div>
-    <h2 style="color:#dc2626;margin-bottom:10px">Could not load data</h2>
-    <p id="error-msg" style="color:#64748b;font-size:13px;margin-bottom:24px"></p>
-    <button onclick="loadData()" style="padding:10px 28px;background:#2563eb;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer">Try Again</button>
+    <div class="error-title">Unable to load data</div>
+    <div class="error-msg" id="error-msg"></div>
+    <button class="error-btn" onclick="loadData()">Try Again</button>
   </div>
 </div>
 
@@ -86,126 +265,130 @@ td { padding: 9px 14px; border-top: 1px solid #f1f5f9; }
   <div class="header">
     <div class="header-inner">
       <div class="logo">
-        <span style="font-size:20px">📦</span>
-        <span class="logo-text">Streetlite Dashboard</span>
-        <span class="live-badge">● LIVE</span>
+        <div class="logo-icon">S</div>
+        <span class="logo-text">Streetlite</span>
+        <div class="live-dot"></div>
       </div>
-      <div class="tabs">
-        <button class="tab active" onclick="showTab('overview',this)">Overview</button>
-        <button class="tab" id="restock-tab-btn" onclick="showTab('restock',this)">Restock</button>
-        <button class="tab" onclick="showTab('brands',this)">Brands</button>
-        <button class="tab" onclick="showTab('chat',this)">AI Chat</button>
+      <div class="nav">
+        <button class="nav-btn active" onclick="showTab('overview',this)">Overview</button>
+        <button class="nav-btn" id="restock-tab-btn" onclick="showTab('restock',this)">Restock</button>
+        <button class="nav-btn" onclick="showTab('brands',this)">Brands</button>
       </div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <span id="updated-time" style="font-size:11px;color:#94a3b8"></span>
-        <button class="refresh-btn" onclick="loadData()">↻ Refresh</button>
+      <div class="header-right">
+        <span id="days-info" class="meta-text"></span>
+        <span id="updated-time" class="meta-text"></span>
+        <button class="refresh-btn" onclick="loadData()" title="Refresh">↻</button>
       </div>
     </div>
   </div>
 
-  <div class="content">
+  <div class="ai-bar-wrapper animate-in">
+    <div class="ai-bar">
+      <span class="ai-bar-icon">✦</span>
+      <input id="ai-input" placeholder="Ask about your sales, inventory, or brands..." onkeydown="if(event.key==='Enter')askAI()">
+      <button class="ai-bar-btn" onclick="askAI()" id="ask-btn">Ask AI</button>
+    </div>
+  </div>
+  <div class="ai-suggestions">
+    <button class="ai-chip" onclick="setQ('What should I reorder this week?')">Reorder this week?</button>
+    <button class="ai-chip" onclick="setQ('Which brand is most profitable?')">Most profitable brand?</button>
+    <button class="ai-chip" onclick="setQ('Which products have negative margin?')">Negative margin?</button>
+    <button class="ai-chip" onclick="setQ('Which products have the highest refund rate?')">Highest refund rate?</button>
+    <button class="ai-chip" onclick="setQ('How many days of stock on average?')">Avg stock days?</button>
+  </div>
+  <div class="ai-answer-box" id="ai-answer-box">
+    <div class="ai-answer-content">
+      <button class="ai-close" onclick="closeAI()">✕</button>
+      <div class="ai-answer-label">✦ AI Insight</div>
+      <div id="ai-answer"></div>
+    </div>
+  </div>
 
-    <!-- OVERVIEW -->
+  <div class="content">
     <div id="tab-overview">
-      <div class="kpi-grid">
-        <div class="kpi-card"><div class="kpi-icon">💰</div><div class="kpi-value" id="kpi-revenue">-</div><div class="kpi-label">Total Revenue</div></div>
-        <div class="kpi-card"><div class="kpi-icon">📦</div><div class="kpi-value" id="kpi-units">-</div><div class="kpi-label">Units Sold</div></div>
-        <div class="kpi-card"><div class="kpi-icon">📈</div><div class="kpi-value" id="kpi-profit">-</div><div class="kpi-label">Net Profit</div></div>
-        <div class="kpi-card"><div class="kpi-icon">📊</div><div class="kpi-value" id="kpi-margin">-</div><div class="kpi-label">Avg Margin</div></div>
-        <div class="kpi-card"><div class="kpi-icon">↩️</div><div class="kpi-value" id="kpi-refunds">-</div><div class="kpi-label">Total Refunds</div></div>
+      <div class="kpi-grid animate-in delay-1">
+        <div class="kpi-card"><div class="kpi-label">Revenue</div><div class="kpi-value" id="kpi-revenue">-</div></div>
+        <div class="kpi-card"><div class="kpi-label">Units Sold</div><div class="kpi-value" id="kpi-units">-</div></div>
+        <div class="kpi-card"><div class="kpi-label">Net Profit</div><div class="kpi-value" id="kpi-profit">-</div></div>
+        <div class="kpi-card"><div class="kpi-label">Avg Margin</div><div class="kpi-value" id="kpi-margin">-</div></div>
+        <div class="kpi-card"><div class="kpi-label">Refunds</div><div class="kpi-value" id="kpi-refunds">-</div></div>
       </div>
-      <div id="alert-critical" class="alert alert-red hidden" onclick="showTab('restock',document.querySelectorAll('.tab')[1])">
-        <span>🔴</span><span class="msg" id="alert-critical-msg"></span><span class="arrow" style="color:#dc2626">View →</span>
+      <div id="alert-critical" class="alert-banner alert-red hidden animate-in delay-2" onclick="showTab('restock',document.querySelectorAll('.nav-btn')[1])">
+        <div class="alert-dot alert-dot-red"></div><span class="alert-msg" id="alert-critical-msg"></span><span class="alert-arrow">→</span>
       </div>
-      <div id="alert-warning" class="alert alert-yellow hidden" onclick="showTab('restock',document.querySelectorAll('.tab')[1])">
-        <span>🟡</span><span class="msg" id="alert-warning-msg"></span><span class="arrow" style="color:#d97706">View →</span>
+      <div id="alert-warning" class="alert-banner alert-yellow hidden animate-in delay-2" onclick="showTab('restock',document.querySelectorAll('.nav-btn')[1])">
+        <div class="alert-dot alert-dot-yellow"></div><span class="alert-msg" id="alert-warning-msg"></span><span class="alert-arrow">→</span>
       </div>
-      <div class="card">
-        <div class="card-header"><span class="card-title">Top Products by Revenue</span></div>
+      <div class="card animate-in delay-3">
+        <div class="card-header"><span class="card-title">Top Products</span><span class="period-tag" id="sales-period-label"></span></div>
         <div class="overflow-x"><table><thead><tr>
-          <th>Brand</th><th>ASIN</th><th>SKU</th><th>Units</th><th>Revenue</th><th>Net Profit</th><th>Margin</th><th>Refunds</th><th>Ad Spend</th>
+          <th>Product</th><th>ASIN</th><th>SKU</th><th>Units</th><th>Revenue</th><th>Net Profit</th><th>Margin</th><th>Refunds</th><th>Ad Spend</th>
         </tr></thead><tbody id="products-tbody"></tbody></table></div>
       </div>
     </div>
 
-    <!-- RESTOCK -->
     <div id="tab-restock" class="hidden">
-      <div class="restock-grid">
-        <div class="restock-card" style="background:#fef2f2"><div class="restock-value" style="color:#dc2626" id="r-critical">0</div><div class="restock-label" style="color:#dc2626">Critical (≤7 days)</div></div>
-        <div class="restock-card" style="background:#fffbeb"><div class="restock-value" style="color:#d97706" id="r-warning">0</div><div class="restock-label" style="color:#d97706">Warning (8-15 days)</div></div>
-        <div class="restock-card" style="background:#f0fdf4"><div class="restock-value" style="color:#16a34a" id="r-healthy">0</div><div class="restock-label" style="color:#16a34a">Healthy (>15 days)</div></div>
+      <div class="restock-grid animate-in delay-1">
+        <div class="restock-stat" style="background:var(--red-bg)"><div class="restock-stat-value text-red" id="r-critical">0</div><div class="restock-stat-label text-red">Critical — 7 days or less</div></div>
+        <div class="restock-stat" style="background:var(--yellow-bg)"><div class="restock-stat-value" style="color:var(--yellow)" id="r-warning">0</div><div class="restock-stat-label" style="color:var(--yellow)">Warning — 8 to 15 days</div></div>
+        <div class="restock-stat" style="background:var(--green-bg)"><div class="restock-stat-value text-green" id="r-healthy">0</div><div class="restock-stat-label text-green">Healthy — over 15 days</div></div>
       </div>
-      <div class="card">
+      <div class="card animate-in delay-2">
         <div class="card-header">
           <span class="card-title">Restock Alerts</span>
+          <span class="period-tag" id="restock-period-label" style="margin-right:auto"></span>
           <input class="search-input" id="restock-search" placeholder="Search product, ASIN, brand..." oninput="renderRestock()">
         </div>
         <div class="overflow-x"><table><thead><tr>
-          <th>Status</th><th>Product</th><th>ASIN</th><th>Brand</th><th onclick="sortRestock('totalStock')">Total ↕</th><th onclick="sortRestock('fbaStock')">FBA ↕</th><th>Bartlett</th><th>Florida</th><th onclick="sortRestock('unitsSold')">Units/30d ↕</th><th onclick="sortRestock('dailyVelocity')">Daily ↕</th><th onclick="sortRestock('daysLeft')">Days Left ↕</th><th onclick="sortRestock('suggestedReorder')">Reorder Qty ↕</th>
+          <th>Status</th><th>Product</th><th>ASIN</th><th>Brand</th><th onclick="sortRestock('totalStock')">Total ↕</th><th onclick="sortRestock('fbaStock')">FBA ↕</th><th>Bartlett</th><th>Florida</th><th onclick="sortRestock('unitsSold')">Units ↕</th><th onclick="sortRestock('dailyVelocity')">Daily ↕</th><th onclick="sortRestock('daysLeft')">Days Left ↕</th><th onclick="sortRestock('suggestedReorder')">Reorder ↕</th>
         </tr></thead><tbody id="restock-tbody"></tbody></table></div>
       </div>
     </div>
 
-    <!-- BRANDS -->
     <div id="tab-brands" class="hidden">
-      <div class="card" style="padding:24px">
-        <div style="font-size:15px;font-weight:600;color:#1e293b;margin-bottom:24px">Revenue by Brand (Last 30 Days)</div>
+      <div class="card animate-in delay-1" style="padding:28px">
+        <div style="display:flex;align-items:center;margin-bottom:28px">
+          <span class="card-title">Revenue by Brand</span>
+          <span class="period-tag" id="brands-period-label"></span>
+        </div>
         <div id="brands-content"></div>
       </div>
     </div>
-
-    <!-- AI CHAT -->
-    <div id="tab-chat" class="hidden">
-      <div class="chat-box">
-        <div class="chat-card">
-          <div style="font-size:15px;font-weight:600;color:#1e293b;margin-bottom:4px">AI Assistant</div>
-          <div style="font-size:12px;color:#94a3b8;margin-bottom:18px">Ask anything about your live sales and inventory data.</div>
-          <div class="chat-input-row">
-            <input class="chat-input" id="ai-input" placeholder="e.g. What should I reorder this week?" onkeydown="if(event.key==='Enter')askAI()">
-            <button class="ask-btn" onclick="askAI()" id="ask-btn">Ask</button>
-          </div>
-          <div id="ai-answer" class="chat-answer hidden"></div>
-        </div>
-        <div class="suggestions">
-          <button class="suggestion" onclick="setQ('What should I reorder this week?')">What should I reorder this week?</button>
-          <button class="suggestion" onclick="setQ('Which brand is most profitable?')">Which brand is most profitable?</button>
-          <button class="suggestion" onclick="setQ('Which products have negative margin?')">Which products have negative margin?</button>
-          <button class="suggestion" onclick="setQ('Which products have the highest refund rate?')">Highest refund rate?</button>
-        </div>
-      </div>
-    </div>
-
   </div>
 </div>
 
 <script>
 var API = "https://script.google.com/macros/s/AKfycbzohKimSVO-FOCiWFkHlmwBv4DtQZiuqlD0ImdiLwMymEDNH6W_0MzT4U3GFC0ERVAN/exec";
 var RESTOCK_DAYS = 15;
-var DAYS_IN_REPORT = 30;
-var salesData = [];
-var inventoryData = [];
-var restockData = [];
+var DATA_START_DATE = new Date(2026, 1, 8);
+var salesData = [], inventoryData = [], restockData = [];
 var restockSort = { col: "daysLeft", dir: "asc" };
 
+function getDaysOfData() {
+  var diff = Math.floor((new Date() - new Date(DATA_START_DATE)) / 86400000);
+  return Math.max(diff, 1);
+}
 function parseNum(v) {
-  if (v === null || v === undefined || v === "") return 0;
+  if (v == null || v === "") return 0;
   return parseFloat(String(v).replace(/\s/g,"").replace(",",".")) || 0;
 }
-
-function fmt(n) {
-  return "$" + Number(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+function fmt(n) { return "$" + Number(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function asinLink(asin) {
+  var a = String(asin||"").trim();
+  return a ? "<a class='asin-link' href='https://amazon.com/dp/"+a+"' target='_blank'>"+a+"</a>" : "";
 }
-
+function skuLink(sku) {
+  var s = String(sku||"").trim();
+  return s ? "<a class='sku-link' href='https://somersetst.delta.sellercloud.us/catalog/catalog-details.aspx?ID="+encodeURIComponent(s)+"' target='_blank'>"+s+"</a>" : "";
+}
 function show(id) { document.getElementById(id).classList.remove("hidden"); }
 function hide(id) { document.getElementById(id).classList.add("hidden"); }
-
 function showTab(name, btn) {
-  ["overview","restock","brands","chat"].forEach(function(t){ hide("tab-"+t); });
-  document.querySelectorAll(".tab").forEach(function(b){ b.classList.remove("active"); });
+  ["overview","restock","brands"].forEach(function(t){ hide("tab-"+t); });
+  document.querySelectorAll(".nav-btn").forEach(function(b){ b.classList.remove("active"); });
   show("tab-"+name);
   if(btn) btn.classList.add("active");
 }
-
 async function fetchSheet(name) {
   var res = await fetch(API + "?sheet=" + encodeURIComponent(name));
   if (!res.ok) throw new Error("HTTP " + res.status);
@@ -213,27 +396,30 @@ async function fetchSheet(name) {
   if (json.error) throw new Error(json.error);
   return json;
 }
-
 async function loadData() {
   hide("app"); hide("error-screen"); show("loading");
   document.getElementById("loading-msg").textContent = "Loading sales data...";
   try {
     salesData = await fetchSheet("Sales");
-    document.getElementById("loading-msg").textContent = "Loading inventory data...";
+    document.getElementById("loading-msg").textContent = "Loading inventory...";
     inventoryData = await fetchSheet("Inventory");
     buildDashboard();
     hide("loading"); show("app");
-    document.getElementById("updated-time").textContent = "Updated " + new Date().toLocaleTimeString();
+    document.getElementById("updated-time").textContent = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
   } catch(e) {
     hide("loading"); show("error-screen");
     document.getElementById("error-msg").textContent = e.message;
   }
 }
-
 function buildDashboard() {
+  var daysOfData = getDaysOfData();
+  document.getElementById("days-info").textContent = daysOfData + "d window";
+  document.getElementById("sales-period-label").textContent = "Last " + daysOfData + " days";
+  document.getElementById("restock-period-label").textContent = "Velocity: " + daysOfData + " days";
+  document.getElementById("brands-period-label").textContent = "Last " + daysOfData + " days";
+
   var productRows = salesData.filter(function(r){ return r["ASIN"] && String(r["ASIN"]).trim() !== ""; });
   var brandRows = salesData.filter(function(r){ return !r["ASIN"] || String(r["ASIN"]).trim() === ""; });
-
   var totalRevenue = productRows.reduce(function(s,r){ return s+parseNum(r["Sales"]); },0);
   var totalUnits = productRows.reduce(function(s,r){ return s+parseNum(r["Units"]); },0);
   var totalNetProfit = productRows.reduce(function(s,r){ return s+parseNum(r["Net profit"]); },0);
@@ -243,20 +429,18 @@ function buildDashboard() {
   document.getElementById("kpi-revenue").textContent = fmt(totalRevenue);
   document.getElementById("kpi-units").textContent = totalUnits.toLocaleString();
   document.getElementById("kpi-profit").textContent = fmt(totalNetProfit);
-  document.getElementById("kpi-profit").style.color = totalNetProfit >= 0 ? "#16a34a" : "#dc2626";
+  document.getElementById("kpi-profit").style.color = totalNetProfit >= 0 ? "var(--green)" : "var(--red)";
   document.getElementById("kpi-margin").textContent = avgMargin.toFixed(1)+"%";
-  document.getElementById("kpi-margin").style.color = avgMargin >= 0 ? "#16a34a" : "#dc2626";
+  document.getElementById("kpi-margin").style.color = avgMargin >= 0 ? "var(--green)" : "var(--red)";
   document.getElementById("kpi-refunds").textContent = totalRefunds.toLocaleString();
 
-  // Products table
   var sorted = productRows.slice().sort(function(a,b){ return parseNum(b["Sales"])-parseNum(a["Sales"]); }).slice(0,30);
-  var tbody = document.getElementById("products-tbody");
-  tbody.innerHTML = sorted.map(function(r){
+  document.getElementById("products-tbody").innerHTML = sorted.map(function(r){
     var np = parseNum(r["Net profit"]);
-    return "<tr><td style='font-weight:500'>"+r["Brand / Product"]+"</td><td class='blue mono'>"+r["ASIN"]+"</td><td style='color:#64748b;font-size:11px'>"+r["SKU"]+"</td><td>"+parseNum(r["Units"])+"</td><td style='font-weight:600'>"+fmt(parseNum(r["Sales"]))+"</td><td style='font-weight:600;color:"+(np>=0?"#16a34a":"#dc2626")+"'>"+fmt(np)+"</td><td>"+parseNum(r["Margin"]).toFixed(1)+"%</td><td>"+parseNum(r["Refunds"])+"</td><td style='color:#dc2626'>"+fmt(Math.abs(parseNum(r["Ads"])))+"</td></tr>";
+    return "<tr><td class='text-bold'>"+r["Brand / Product"]+"</td><td>"+asinLink(r["ASIN"])+"</td><td>"+skuLink(r["SKU"])+"</td><td>"+parseNum(r["Units"])+"</td><td class='text-bold'>"+fmt(parseNum(r["Sales"]))+"</td><td class='text-bold "+(np>=0?"text-green":"text-red")+"'>"+fmt(np)+"</td><td>"+parseNum(r["Margin"]).toFixed(1)+"%</td><td>"+parseNum(r["Refunds"])+"</td><td class='text-red'>"+fmt(Math.abs(parseNum(r["Ads"])))+"</td></tr>";
   }).join("");
 
-  // Restock
+  var daysOfData = getDaysOfData();
   restockData = inventoryData.filter(function(r){ return r["ProductName"] && r["ProductName"] !== "ProductName" && r["ProductName"] !== ""; }).map(function(r){
     var asin = String(r["ASIN"]||"").trim();
     var name = String(r["ProductName"]||"").trim();
@@ -267,50 +451,39 @@ function buildDashboard() {
     var florida = parseNum(r["Florida_Distribution_Center"]);
     var salesRow = productRows.find(function(s){ return String(s["ASIN"]).trim()===asin; });
     var unitsSold = salesRow ? parseNum(salesRow["Units"]) : 0;
-    var dailyVelocity = unitsSold/DAYS_IN_REPORT;
-    var daysLeft = dailyVelocity>0 ? Math.round(totalStock/dailyVelocity) : 999;
-    var suggestedReorder = dailyVelocity>0 ? Math.round(dailyVelocity*45) : 0;
-    var status = daysLeft<=7 ? "red" : daysLeft<=RESTOCK_DAYS ? "yellow" : "green";
+    var dailyVelocity = unitsSold / daysOfData;
+    var daysLeft = dailyVelocity > 0 ? Math.round(totalStock / dailyVelocity) : 999;
+    var suggestedReorder = dailyVelocity > 0 ? Math.round(dailyVelocity * 45) : 0;
+    var status = daysLeft <= 7 ? "red" : daysLeft <= RESTOCK_DAYS ? "yellow" : "green";
     return {asin:asin,name:name,brand:brand,totalStock:totalStock,fbaStock:fbaStock,bartlett:bartlett,florida:florida,unitsSold:unitsSold,dailyVelocity:dailyVelocity,daysLeft:daysLeft,suggestedReorder:suggestedReorder,status:status};
   });
 
   var critical = restockData.filter(function(r){ return r.status==="red"; });
   var warning = restockData.filter(function(r){ return r.status==="yellow"; });
   var healthy = restockData.filter(function(r){ return r.status==="green"; });
-
   document.getElementById("r-critical").textContent = critical.length;
   document.getElementById("r-warning").textContent = warning.length;
   document.getElementById("r-healthy").textContent = healthy.length;
 
-  if(critical.length>0){
-    show("alert-critical");
-    document.getElementById("alert-critical-msg").textContent = critical.length+" products critically low on stock — under 7 days remaining";
-  }
-  if(warning.length>0){
-    show("alert-warning");
-    document.getElementById("alert-warning-msg").textContent = warning.length+" products approaching restock threshold — 8 to 15 days remaining";
-  }
+  if(critical.length>0){ show("alert-critical"); document.getElementById("alert-critical-msg").textContent = critical.length+" products critically low — under 7 days of stock"; }
+  if(warning.length>0){ show("alert-warning"); document.getElementById("alert-warning-msg").textContent = warning.length+" products approaching restock — 8 to 15 days remaining"; }
 
-  document.getElementById("restock-tab-btn").textContent = "Restock "+(critical.length>0?"🔴"+critical.length:warning.length>0?"🟡"+warning.length:"");
-
+  var rl = "Restock";
+  if(critical.length>0) rl += " · "+critical.length+" critical";
+  else if(warning.length>0) rl += " · "+warning.length+" warning";
+  document.getElementById("restock-tab-btn").textContent = rl;
   renderRestock();
 
-  // Brands
   var brandRevMap = {};
-  brandRows.forEach(function(r){
-    var b = String(r["Brand / Product"]||"").trim();
-    if(b) brandRevMap[b]=(brandRevMap[b]||0)+parseNum(r["Sales"]);
-  });
+  brandRows.forEach(function(r){ var b=String(r["Brand / Product"]||"").trim(); if(b) brandRevMap[b]=(brandRevMap[b]||0)+parseNum(r["Sales"]); });
   var topBrands = Object.entries(brandRevMap).sort(function(a,b){ return b[1]-a[1]; }).slice(0,10);
   var maxRev = topBrands[0]?topBrands[0][1]:1;
   document.getElementById("brands-content").innerHTML = topBrands.map(function(b){
-    return "<div class='bar-row'><div class='bar-label'><span>"+b[0]+"</span><span>"+fmt(b[1])+"</span></div><div class='bar-track'><div class='bar-fill' style='width:"+(b[1]/maxRev*100)+"%'></div></div></div>";
+    return "<div class='brand-row'><div class='brand-info'><span class='brand-name'>"+b[0]+"</span><span class='brand-value'>"+fmt(b[1])+"</span></div><div class='brand-track'><div class='brand-fill' style='width:"+(b[1]/maxRev*100)+"%'></div></div></div>";
   }).join("");
 
-  // Store context for AI
-  window.aiContext = {totalRevenue:totalRevenue,totalUnits:totalUnits,totalNetProfit:totalNetProfit,avgMargin:avgMargin,totalRefunds:totalRefunds,topBrands:topBrands,critical:critical,warning:warning,productRows:productRows};
+  window.aiContext = {daysOfData:daysOfData,totalRevenue:totalRevenue,totalUnits:totalUnits,totalNetProfit:totalNetProfit,avgMargin:avgMargin,totalRefunds:totalRefunds,topBrands:topBrands,critical:critical,warning:warning,productRows:productRows};
 }
-
 function renderRestock() {
   var search = (document.getElementById("restock-search")||{value:""}).value.toLowerCase();
   var filtered = restockData.filter(function(r){
@@ -320,42 +493,40 @@ function renderRestock() {
     if(typeof av==="number") return restockSort.dir==="asc"?av-bv:bv-av;
     return restockSort.dir==="asc"?String(av).localeCompare(String(bv)):String(bv).localeCompare(String(av));
   });
-  var sc = function(s){ return s==="red"?"status-red":s==="yellow"?"status-yellow":"status-green"; };
-  var sl = function(s){ return s==="red"?"🔴 Critical":s==="yellow"?"🟡 Warning":"🟢 Healthy"; };
-  var rowbg = function(s){ return s==="red"?" class='row-red'":s==="yellow"?" class='row-yellow'":""; };
+  var pc = function(s){ return s==="red"?"pill-red":s==="yellow"?"pill-yellow":"pill-green"; };
+  var pt = function(s){ return s==="red"?"Critical":s==="yellow"?"Warning":"Healthy"; };
+  var rc = function(s){ return s==="red"?" class='row-critical'":s==="yellow"?" class='row-warning'":""; };
+  var dc = function(s){ return s==="red"?"var(--red)":s==="yellow"?"var(--yellow)":"var(--green)"; };
   document.getElementById("restock-tbody").innerHTML = filtered.map(function(r){
-    return "<tr"+rowbg(r.status)+"><td><span class='"+sc(r.status)+"'>"+sl(r.status)+"</span></td><td style='max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap'>"+r.name+"</td><td class='blue mono'>"+r.asin+"</td><td>"+r.brand+"</td><td style='font-weight:600'>"+r.totalStock+"</td><td>"+r.fbaStock+"</td><td>"+r.bartlett+"</td><td>"+r.florida+"</td><td>"+r.unitsSold+"</td><td>"+r.dailyVelocity.toFixed(1)+"</td><td style='font-weight:700;color:"+(r.status==="red"?"#ef4444":r.status==="yellow"?"#f59e0b":"#22c55e")+"'>"+(r.daysLeft===999?"∞":r.daysLeft)+"</td><td style='color:#2563eb;font-weight:600'>"+(r.suggestedReorder>0?r.suggestedReorder:"-")+"</td></tr>";
+    return "<tr"+rc(r.status)+"><td><span class='status-pill "+pc(r.status)+"'>"+pt(r.status)+"</span></td><td class='text-ellipsis'>"+r.name+"</td><td>"+asinLink(r.asin)+"</td><td>"+r.brand+"</td><td class='text-bold'>"+r.totalStock+"</td><td>"+r.fbaStock+"</td><td>"+r.bartlett+"</td><td>"+r.florida+"</td><td>"+r.unitsSold+"</td><td>"+r.dailyVelocity.toFixed(1)+"</td><td style='font-weight:700;color:"+dc(r.status)+"'>"+(r.daysLeft===999?"∞":r.daysLeft)+"</td><td class='text-accent text-bold'>"+(r.suggestedReorder>0?r.suggestedReorder:"-")+"</td></tr>";
   }).join("");
 }
-
 function sortRestock(col) {
   if(restockSort.col===col) restockSort.dir=restockSort.dir==="asc"?"desc":"asc";
   else { restockSort.col=col; restockSort.dir="asc"; }
   renderRestock();
 }
-
-function setQ(q) { document.getElementById("ai-input").value=q; }
-
+function setQ(q) { document.getElementById("ai-input").value=q; document.getElementById("ai-input").focus(); }
+function closeAI() { document.getElementById("ai-answer-box").classList.remove("visible"); }
 async function askAI() {
   var q = document.getElementById("ai-input").value.trim();
   if(!q) return;
   var btn = document.getElementById("ask-btn");
-  btn.textContent="..."; btn.disabled=true;
+  btn.textContent="Thinking..."; btn.disabled=true;
   var ctx = window.aiContext;
-  var system = "You are an Amazon seller assistant for Streetlite Company. Answer concisely.\n\nSALES (last 30 days):\nRevenue: "+fmt(ctx.totalRevenue)+" | Units: "+ctx.totalUnits+" | Net Profit: "+fmt(ctx.totalNetProfit)+" | Margin: "+ctx.avgMargin.toFixed(1)+"% | Refunds: "+ctx.totalRefunds+"\n\nTOP BRANDS:\n"+ctx.topBrands.map(function(b){return b[0]+": "+fmt(b[1]);}).join("\n")+"\n\nCRITICAL STOCK:\n"+ctx.critical.slice(0,15).map(function(r){return r.name+" | "+r.asin+" | Stock: "+r.totalStock+" | Days: "+r.daysLeft+" | Reorder: "+r.suggestedReorder;}).join("\n")+"\n\nWARNING STOCK:\n"+ctx.warning.slice(0,15).map(function(r){return r.name+" | "+r.asin+" | Stock: "+r.totalStock+" | Days: "+r.daysLeft;}).join("\n")+"\n\nTOP PRODUCTS:\n"+ctx.productRows.slice().sort(function(a,b){return parseNum(b["Sales"])-parseNum(a["Sales"]);}).slice(0,20).map(function(r){return r["Brand / Product"]+" | "+r["ASIN"]+" | Units: "+r["Units"]+" | Revenue: "+fmt(parseNum(r["Sales"]))+" | Margin: "+parseNum(r["Margin"]).toFixed(1)+"%";}).join("\n");
+  var system = "You are an Amazon seller assistant for Streetlite Company. Answer concisely. Use plain text, no markdown.\n\nSALES DATA COVERS "+ctx.daysOfData+" DAYS (starting Feb 8, 2026):\nRevenue: "+fmt(ctx.totalRevenue)+" | Units: "+ctx.totalUnits+" | Net Profit: "+fmt(ctx.totalNetProfit)+" | Margin: "+ctx.avgMargin.toFixed(1)+"% | Refunds: "+ctx.totalRefunds+"\nDaily velocity = total units / "+ctx.daysOfData+" days.\n\nTOP BRANDS:\n"+ctx.topBrands.map(function(b){return b[0]+": "+fmt(b[1]);}).join("\n")+"\n\nCRITICAL STOCK:\n"+ctx.critical.slice(0,15).map(function(r){return r.name+" | "+r.asin+" | Stock: "+r.totalStock+" | Days: "+r.daysLeft+" | Reorder: "+r.suggestedReorder;}).join("\n")+"\n\nWARNING STOCK:\n"+ctx.warning.slice(0,15).map(function(r){return r.name+" | "+r.asin+" | Stock: "+r.totalStock+" | Days: "+r.daysLeft;}).join("\n")+"\n\nTOP PRODUCTS:\n"+ctx.productRows.slice().sort(function(a,b){return parseNum(b["Sales"])-parseNum(a["Sales"]);}).slice(0,20).map(function(r){return r["Brand / Product"]+" | "+r["ASIN"]+" | Units: "+r["Units"]+" | Revenue: "+fmt(parseNum(r["Sales"]))+" | Margin: "+parseNum(r["Margin"]).toFixed(1)+"%";}).join("\n");
   try {
-    var res = await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,system:system,messages:[{role:"user",content:q}]})});
+    var res = await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({system:system,message:q})});
     var data = await res.json();
-    var answer = data.content&&data.content[0]?data.content[0].text:"No response.";
-    var el = document.getElementById("ai-answer");
-    el.textContent=answer; el.classList.remove("hidden");
+    if(data.error) throw new Error(data.error);
+    document.getElementById("ai-answer").textContent = data.answer;
+    document.getElementById("ai-answer-box").classList.add("visible");
   } catch(e) {
-    var el = document.getElementById("ai-answer");
-    el.textContent="Error: "+e.message; el.classList.remove("hidden");
+    document.getElementById("ai-answer").textContent = "Error: "+e.message;
+    document.getElementById("ai-answer-box").classList.add("visible");
   }
-  btn.textContent="Ask"; btn.disabled=false;
+  btn.textContent="Ask AI"; btn.disabled=false;
 }
-
 loadData();
 </script>
 </body>
