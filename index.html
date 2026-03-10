@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Streetlite Dashboard</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Inter, sans-serif; background: #f8fafc; min-height: 100vh; }
+.header { background: white; border-bottom: 1px solid #e2e8f0; padding: 0 28px; }
+.header-inner { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; height: 58px; gap: 24px; }
+.logo { display: flex; align-items: center; gap: 8px; }
+.logo-text { font-weight: 700; font-size: 17px; color: #1e293b; }
+.live-badge { font-size: 10px; color: #22c55e; background: #f0fdf4; padding: 2px 7px; border-radius: 10px; font-weight: 600; }
+.tabs { display: flex; gap: 2px; flex: 1; justify-content: center; }
+.tab { padding: 6px 18px; border-radius: 6px; border: none; cursor: pointer; font-size: 13px; font-weight: 500; background: transparent; color: #64748b; }
+.tab.active { background: #2563eb; color: white; }
+.refresh-btn { font-size: 12px; color: #64748b; background: #f1f5f9; border: none; border-radius: 6px; padding: 6px 12px; cursor: pointer; }
+.content { max-width: 1400px; margin: 0 auto; padding: 24px 28px; }
+.kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 20px; }
+.kpi-card { background: white; border-radius: 12px; padding: 18px 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+.kpi-icon { font-size: 18px; margin-bottom: 6px; }
+.kpi-value { font-size: 21px; font-weight: 700; color: #1e293b; }
+.kpi-label { font-size: 11px; color: #94a3b8; margin-top: 3px; }
+.alert { border-radius: 10px; padding: 11px 18px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.alert-red { background: #fef2f2; border: 1px solid #fecaca; }
+.alert-yellow { background: #fffbeb; border: 1px solid #fde68a; }
+.alert-red span.msg { font-weight: 600; color: #dc2626; font-size: 13px; }
+.alert-yellow span.msg { font-weight: 600; color: #d97706; font-size: 13px; }
+.alert span.arrow { margin-left: auto; font-size: 12px; }
+.card { background: white; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); overflow: hidden; }
+.card-header { padding: 14px 20px; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; }
+.card-title { font-size: 15px; font-weight: 600; color: #1e293b; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+th { padding: 9px 14px; text-align: left; font-weight: 600; color: #64748b; white-space: nowrap; background: #f8fafc; cursor: pointer; }
+td { padding: 9px 14px; border-top: 1px solid #f1f5f9; }
+.green { color: #16a34a; } .red { color: #dc2626; } .blue { color: #2563eb; }
+.mono { font-family: monospace; font-size: 11px; }
+.status-red { color: #ef4444; font-weight: 600; font-size: 11px; }
+.status-yellow { color: #f59e0b; font-weight: 600; font-size: 11px; }
+.status-green { color: #22c55e; font-weight: 600; font-size: 11px; }
+.row-red { background: #fef2f2; }
+.row-yellow { background: #fffbeb; }
+.restock-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 20px; }
+.restock-card { border-radius: 12px; padding: 18px 22px; }
+.restock-value { font-size: 26px; font-weight: 700; }
+.restock-label { font-size: 12px; margin-top: 3px; }
+.search-input { margin-left: auto; padding: 7px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px; width: 260px; }
+.bar-row { margin-bottom: 18px; }
+.bar-label { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px; font-weight: 500; color: #1e293b; }
+.bar-track { height: 8px; background: #f1f5f9; border-radius: 4px; overflow: hidden; }
+.bar-fill { height: 100%; background: #2563eb; border-radius: 4px; }
+.chat-box { max-width: 700px; margin: 0 auto; }
+.chat-card { background: white; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); padding: 24px; margin-bottom: 14px; }
+.chat-input-row { display: flex; gap: 8px; margin-bottom: 14px; }
+.chat-input { flex: 1; padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; }
+.ask-btn { padding: 10px 20px; background: #2563eb; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+.chat-answer { background: #f8fafc; border-radius: 8px; padding: 16px; font-size: 13px; color: #1e293b; line-height: 1.7; white-space: pre-wrap; }
+.suggestions { display: flex; flex-wrap: wrap; gap: 8px; }
+.suggestion { padding: 7px 14px; background: white; border: 1px solid #e2e8f0; border-radius: 20px; font-size: 12px; color: #64748b; cursor: pointer; }
+.loading { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 16px; }
+.error-box { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+.error-card { background: white; border-radius: 16px; padding: 40px; max-width: 500px; text-align: center; }
+.hidden { display: none; }
+.overflow-x { overflow-x: auto; }
+</style>
+</head>
+<body>
+
+<div id="loading" class="loading">
+  <div style="font-size:40px">📦</div>
+  <div style="font-size:16px;font-weight:600;color:#1e293b">Streetlite Dashboard</div>
+  <div id="loading-msg" style="font-size:14px;color:#64748b">Loading sales data...</div>
+</div>
+
+<div id="error-screen" class="error-box hidden">
+  <div class="error-card">
+    <div style="font-size:36px;margin-bottom:12px">⚠️</div>
+    <h2 style="color:#dc2626;margin-bottom:10px">Could not load data</h2>
+    <p id="error-msg" style="color:#64748b;font-size:13px;margin-bottom:24px"></p>
+    <button onclick="loadData()" style="padding:10px 28px;background:#2563eb;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer">Try Again</button>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+  <div class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <span style="font-size:20px">📦</span>
+        <span class="logo-text">Streetlite Dashboard</span>
+        <span class="live-badge">● LIVE</span>
+      </div>
+      <div class="tabs">
+        <button class="tab active" onclick="showTab('overview',this)">Overview</button>
+        <button class="tab" id="restock-tab-btn" onclick="showTab('restock',this)">Restock</button>
+        <button class="tab" onclick="showTab('brands',this)">Brands</button>
+        <button class="tab" onclick="showTab('chat',this)">AI Chat</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span id="updated-time" style="font-size:11px;color:#94a3b8"></span>
+        <button class="refresh-btn" onclick="loadData()">↻ Refresh</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- OVERVIEW -->
+    <div id="tab-overview">
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-icon">💰</div><div class="kpi-value" id="kpi-revenue">-</div><div class="kpi-label">Total Revenue</div></div>
+        <div class="kpi-card"><div class="kpi-icon">📦</div><div class="kpi-value" id="kpi-units">-</div><div class="kpi-label">Units Sold</div></div>
+        <div class="kpi-card"><div class="kpi-icon">📈</div><div class="kpi-value" id="kpi-profit">-</div><div class="kpi-label">Net Profit</div></div>
+        <div class="kpi-card"><div class="kpi-icon">📊</div><div class="kpi-value" id="kpi-margin">-</div><div class="kpi-label">Avg Margin</div></div>
+        <div class="kpi-card"><div class="kpi-icon">↩️</div><div class="kpi-value" id="kpi-refunds">-</div><div class="kpi-label">Total Refunds</div></div>
+      </div>
+      <div id="alert-critical" class="alert alert-red hidden" onclick="showTab('restock',document.querySelectorAll('.tab')[1])">
+        <span>🔴</span><span class="msg" id="alert-critical-msg"></span><span class="arrow" style="color:#dc2626">View →</span>
+      </div>
+      <div id="alert-warning" class="alert alert-yellow hidden" onclick="showTab('restock',document.querySelectorAll('.tab')[1])">
+        <span>🟡</span><span class="msg" id="alert-warning-msg"></span><span class="arrow" style="color:#d97706">View →</span>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Top Products by Revenue</span></div>
+        <div class="overflow-x"><table><thead><tr>
+          <th>Brand</th><th>ASIN</th><th>SKU</th><th>Units</th><th>Revenue</th><th>Net Profit</th><th>Margin</th><th>Refunds</th><th>Ad Spend</th>
+        </tr></thead><tbody id="products-tbody"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- RESTOCK -->
+    <div id="tab-restock" class="hidden">
+      <div class="restock-grid">
+        <div class="restock-card" style="background:#fef2f2"><div class="restock-value" style="color:#dc2626" id="r-critical">0</div><div class="restock-label" style="color:#dc2626">Critical (≤7 days)</div></div>
+        <div class="restock-card" style="background:#fffbeb"><div class="restock-value" style="color:#d97706" id="r-warning">0</div><div class="restock-label" style="color:#d97706">Warning (8-15 days)</div></div>
+        <div class="restock-card" style="background:#f0fdf4"><div class="restock-value" style="color:#16a34a" id="r-healthy">0</div><div class="restock-label" style="color:#16a34a">Healthy (>15 days)</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Restock Alerts</span>
+          <input class="search-input" id="restock-search" placeholder="Search product, ASIN, brand..." oninput="renderRestock()">
+        </div>
+        <div class="overflow-x"><table><thead><tr>
+          <th>Status</th><th>Product</th><th>ASIN</th><th>Brand</th><th onclick="sortRestock('totalStock')">Total ↕</th><th onclick="sortRestock('fbaStock')">FBA ↕</th><th>Bartlett</th><th>Florida</th><th onclick="sortRestock('unitsSold')">Units/30d ↕</th><th onclick="sortRestock('dailyVelocity')">Daily ↕</th><th onclick="sortRestock('daysLeft')">Days Left ↕</th><th onclick="sortRestock('suggestedReorder')">Reorder Qty ↕</th>
+        </tr></thead><tbody id="restock-tbody"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- BRANDS -->
+    <div id="tab-brands" class="hidden">
+      <div class="card" style="padding:24px">
+        <div style="font-size:15px;font-weight:600;color:#1e293b;margin-bottom:24px">Revenue by Brand (Last 30 Days)</div>
+        <div id="brands-content"></div>
+      </div>
+    </div>
+
+    <!-- AI CHAT -->
+    <div id="tab-chat" class="hidden">
+      <div class="chat-box">
+        <div class="chat-card">
+          <div style="font-size:15px;font-weight:600;color:#1e293b;margin-bottom:4px">AI Assistant</div>
+          <div style="font-size:12px;color:#94a3b8;margin-bottom:18px">Ask anything about your live sales and inventory data.</div>
+          <div class="chat-input-row">
+            <input class="chat-input" id="ai-input" placeholder="e.g. What should I reorder this week?" onkeydown="if(event.key==='Enter')askAI()">
+            <button class="ask-btn" onclick="askAI()" id="ask-btn">Ask</button>
+          </div>
+          <div id="ai-answer" class="chat-answer hidden"></div>
+        </div>
+        <div class="suggestions">
+          <button class="suggestion" onclick="setQ('What should I reorder this week?')">What should I reorder this week?</button>
+          <button class="suggestion" onclick="setQ('Which brand is most profitable?')">Which brand is most profitable?</button>
+          <button class="suggestion" onclick="setQ('Which products have negative margin?')">Which products have negative margin?</button>
+          <button class="suggestion" onclick="setQ('Which products have the highest refund rate?')">Highest refund rate?</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+var API = "https://script.google.com/macros/s/AKfycbzohKimSVO-FOCiWFkHlmwBv4DtQZiuqlD0ImdiLwMymEDNH6W_0MzT4U3GFC0ERVAN/exec";
+var RESTOCK_DAYS = 15;
+var DAYS_IN_REPORT = 30;
+var salesData = [];
+var inventoryData = [];
+var restockData = [];
+var restockSort = { col: "daysLeft", dir: "asc" };
+
+function parseNum(v) {
+  if (v === null || v === undefined || v === "") return 0;
+  return parseFloat(String(v).replace(/\s/g,"").replace(",",".")) || 0;
+}
+
+function fmt(n) {
+  return "$" + Number(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+function show(id) { document.getElementById(id).classList.remove("hidden"); }
+function hide(id) { document.getElementById(id).classList.add("hidden"); }
+
+function showTab(name, btn) {
+  ["overview","restock","brands","chat"].forEach(function(t){ hide("tab-"+t); });
+  document.querySelectorAll(".tab").forEach(function(b){ b.classList.remove("active"); });
+  show("tab-"+name);
+  if(btn) btn.classList.add("active");
+}
+
+async function fetchSheet(name) {
+  var res = await fetch(API + "?sheet=" + encodeURIComponent(name));
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  var json = await res.json();
+  if (json.error) throw new Error(json.error);
+  return json;
+}
+
+async function loadData() {
+  hide("app"); hide("error-screen"); show("loading");
+  document.getElementById("loading-msg").textContent = "Loading sales data...";
+  try {
+    salesData = await fetchSheet("Sales");
+    document.getElementById("loading-msg").textContent = "Loading inventory data...";
+    inventoryData = await fetchSheet("Inventory");
+    buildDashboard();
+    hide("loading"); show("app");
+    document.getElementById("updated-time").textContent = "Updated " + new Date().toLocaleTimeString();
+  } catch(e) {
+    hide("loading"); show("error-screen");
+    document.getElementById("error-msg").textContent = e.message;
+  }
+}
+
+function buildDashboard() {
+  var productRows = salesData.filter(function(r){ return r["ASIN"] && String(r["ASIN"]).trim() !== ""; });
+  var brandRows = salesData.filter(function(r){ return !r["ASIN"] || String(r["ASIN"]).trim() === ""; });
+
+  var totalRevenue = productRows.reduce(function(s,r){ return s+parseNum(r["Sales"]); },0);
+  var totalUnits = productRows.reduce(function(s,r){ return s+parseNum(r["Units"]); },0);
+  var totalNetProfit = productRows.reduce(function(s,r){ return s+parseNum(r["Net profit"]); },0);
+  var totalRefunds = productRows.reduce(function(s,r){ return s+parseNum(r["Refunds"]); },0);
+  var avgMargin = productRows.length > 0 ? productRows.reduce(function(s,r){ return s+parseNum(r["Margin"]); },0)/productRows.length : 0;
+
+  document.getElementById("kpi-revenue").textContent = fmt(totalRevenue);
+  document.getElementById("kpi-units").textContent = totalUnits.toLocaleString();
+  document.getElementById("kpi-profit").textContent = fmt(totalNetProfit);
+  document.getElementById("kpi-profit").style.color = totalNetProfit >= 0 ? "#16a34a" : "#dc2626";
+  document.getElementById("kpi-margin").textContent = avgMargin.toFixed(1)+"%";
+  document.getElementById("kpi-margin").style.color = avgMargin >= 0 ? "#16a34a" : "#dc2626";
+  document.getElementById("kpi-refunds").textContent = totalRefunds.toLocaleString();
+
+  // Products table
+  var sorted = productRows.slice().sort(function(a,b){ return parseNum(b["Sales"])-parseNum(a["Sales"]); }).slice(0,30);
+  var tbody = document.getElementById("products-tbody");
+  tbody.innerHTML = sorted.map(function(r){
+    var np = parseNum(r["Net profit"]);
+    return "<tr><td style='font-weight:500'>"+r["Brand / Product"]+"</td><td class='blue mono'>"+r["ASIN"]+"</td><td style='color:#64748b;font-size:11px'>"+r["SKU"]+"</td><td>"+parseNum(r["Units"])+"</td><td style='font-weight:600'>"+fmt(parseNum(r["Sales"]))+"</td><td style='font-weight:600;color:"+(np>=0?"#16a34a":"#dc2626")+"'>"+fmt(np)+"</td><td>"+parseNum(r["Margin"]).toFixed(1)+"%</td><td>"+parseNum(r["Refunds"])+"</td><td style='color:#dc2626'>"+fmt(Math.abs(parseNum(r["Ads"])))+"</td></tr>";
+  }).join("");
+
+  // Restock
+  restockData = inventoryData.filter(function(r){ return r["ProductName"] && r["ProductName"] !== "ProductName" && r["ProductName"] !== ""; }).map(function(r){
+    var asin = String(r["ASIN"]||"").trim();
+    var name = String(r["ProductName"]||"").trim();
+    var brand = String(r["Brand"]||"").trim();
+    var totalStock = parseNum(r["Total"]);
+    var fbaStock = parseNum(r["FBA_Warehouse"]);
+    var bartlett = parseNum(r["Bartlett_Distribution"]);
+    var florida = parseNum(r["Florida_Distribution_Center"]);
+    var salesRow = productRows.find(function(s){ return String(s["ASIN"]).trim()===asin; });
+    var unitsSold = salesRow ? parseNum(salesRow["Units"]) : 0;
+    var dailyVelocity = unitsSold/DAYS_IN_REPORT;
+    var daysLeft = dailyVelocity>0 ? Math.round(totalStock/dailyVelocity) : 999;
+    var suggestedReorder = dailyVelocity>0 ? Math.round(dailyVelocity*45) : 0;
+    var status = daysLeft<=7 ? "red" : daysLeft<=RESTOCK_DAYS ? "yellow" : "green";
+    return {asin:asin,name:name,brand:brand,totalStock:totalStock,fbaStock:fbaStock,bartlett:bartlett,florida:florida,unitsSold:unitsSold,dailyVelocity:dailyVelocity,daysLeft:daysLeft,suggestedReorder:suggestedReorder,status:status};
+  });
+
+  var critical = restockData.filter(function(r){ return r.status==="red"; });
+  var warning = restockData.filter(function(r){ return r.status==="yellow"; });
+  var healthy = restockData.filter(function(r){ return r.status==="green"; });
+
+  document.getElementById("r-critical").textContent = critical.length;
+  document.getElementById("r-warning").textContent = warning.length;
+  document.getElementById("r-healthy").textContent = healthy.length;
+
+  if(critical.length>0){
+    show("alert-critical");
+    document.getElementById("alert-critical-msg").textContent = critical.length+" products critically low on stock — under 7 days remaining";
+  }
+  if(warning.length>0){
+    show("alert-warning");
+    document.getElementById("alert-warning-msg").textContent = warning.length+" products approaching restock threshold — 8 to 15 days remaining";
+  }
+
+  document.getElementById("restock-tab-btn").textContent = "Restock "+(critical.length>0?"🔴"+critical.length:warning.length>0?"🟡"+warning.length:"");
+
+  renderRestock();
+
+  // Brands
+  var brandRevMap = {};
+  brandRows.forEach(function(r){
+    var b = String(r["Brand / Product"]||"").trim();
+    if(b) brandRevMap[b]=(brandRevMap[b]||0)+parseNum(r["Sales"]);
+  });
+  var topBrands = Object.entries(brandRevMap).sort(function(a,b){ return b[1]-a[1]; }).slice(0,10);
+  var maxRev = topBrands[0]?topBrands[0][1]:1;
+  document.getElementById("brands-content").innerHTML = topBrands.map(function(b){
+    return "<div class='bar-row'><div class='bar-label'><span>"+b[0]+"</span><span>"+fmt(b[1])+"</span></div><div class='bar-track'><div class='bar-fill' style='width:"+(b[1]/maxRev*100)+"%'></div></div></div>";
+  }).join("");
+
+  // Store context for AI
+  window.aiContext = {totalRevenue:totalRevenue,totalUnits:totalUnits,totalNetProfit:totalNetProfit,avgMargin:avgMargin,totalRefunds:totalRefunds,topBrands:topBrands,critical:critical,warning:warning,productRows:productRows};
+}
+
+function renderRestock() {
+  var search = (document.getElementById("restock-search")||{value:""}).value.toLowerCase();
+  var filtered = restockData.filter(function(r){
+    return !search || r.name.toLowerCase().includes(search) || r.asin.toLowerCase().includes(search) || r.brand.toLowerCase().includes(search);
+  }).sort(function(a,b){
+    var av=a[restockSort.col], bv=b[restockSort.col];
+    if(typeof av==="number") return restockSort.dir==="asc"?av-bv:bv-av;
+    return restockSort.dir==="asc"?String(av).localeCompare(String(bv)):String(bv).localeCompare(String(av));
+  });
+  var sc = function(s){ return s==="red"?"status-red":s==="yellow"?"status-yellow":"status-green"; };
+  var sl = function(s){ return s==="red"?"🔴 Critical":s==="yellow"?"🟡 Warning":"🟢 Healthy"; };
+  var rowbg = function(s){ return s==="red"?" class='row-red'":s==="yellow"?" class='row-yellow'":""; };
+  document.getElementById("restock-tbody").innerHTML = filtered.map(function(r){
+    return "<tr"+rowbg(r.status)+"><td><span class='"+sc(r.status)+"'>"+sl(r.status)+"</span></td><td style='max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap'>"+r.name+"</td><td class='blue mono'>"+r.asin+"</td><td>"+r.brand+"</td><td style='font-weight:600'>"+r.totalStock+"</td><td>"+r.fbaStock+"</td><td>"+r.bartlett+"</td><td>"+r.florida+"</td><td>"+r.unitsSold+"</td><td>"+r.dailyVelocity.toFixed(1)+"</td><td style='font-weight:700;color:"+(r.status==="red"?"#ef4444":r.status==="yellow"?"#f59e0b":"#22c55e")+"'>"+(r.daysLeft===999?"∞":r.daysLeft)+"</td><td style='color:#2563eb;font-weight:600'>"+(r.suggestedReorder>0?r.suggestedReorder:"-")+"</td></tr>";
+  }).join("");
+}
+
+function sortRestock(col) {
+  if(restockSort.col===col) restockSort.dir=restockSort.dir==="asc"?"desc":"asc";
+  else { restockSort.col=col; restockSort.dir="asc"; }
+  renderRestock();
+}
+
+function setQ(q) { document.getElementById("ai-input").value=q; }
+
+async function askAI() {
+  var q = document.getElementById("ai-input").value.trim();
+  if(!q) return;
+  var btn = document.getElementById("ask-btn");
+  btn.textContent="..."; btn.disabled=true;
+  var ctx = window.aiContext;
+  var system = "You are an Amazon seller assistant for Streetlite Company. Answer concisely.\n\nSALES (last 30 days):\nRevenue: "+fmt(ctx.totalRevenue)+" | Units: "+ctx.totalUnits+" | Net Profit: "+fmt(ctx.totalNetProfit)+" | Margin: "+ctx.avgMargin.toFixed(1)+"% | Refunds: "+ctx.totalRefunds+"\n\nTOP BRANDS:\n"+ctx.topBrands.map(function(b){return b[0]+": "+fmt(b[1]);}).join("\n")+"\n\nCRITICAL STOCK:\n"+ctx.critical.slice(0,15).map(function(r){return r.name+" | "+r.asin+" | Stock: "+r.totalStock+" | Days: "+r.daysLeft+" | Reorder: "+r.suggestedReorder;}).join("\n")+"\n\nWARNING STOCK:\n"+ctx.warning.slice(0,15).map(function(r){return r.name+" | "+r.asin+" | Stock: "+r.totalStock+" | Days: "+r.daysLeft;}).join("\n")+"\n\nTOP PRODUCTS:\n"+ctx.productRows.slice().sort(function(a,b){return parseNum(b["Sales"])-parseNum(a["Sales"]);}).slice(0,20).map(function(r){return r["Brand / Product"]+" | "+r["ASIN"]+" | Units: "+r["Units"]+" | Revenue: "+fmt(parseNum(r["Sales"]))+" | Margin: "+parseNum(r["Margin"]).toFixed(1)+"%";}).join("\n");
+  try {
+    var res = await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,system:system,messages:[{role:"user",content:q}]})});
+    var data = await res.json();
+    var answer = data.content&&data.content[0]?data.content[0].text:"No response.";
+    var el = document.getElementById("ai-answer");
+    el.textContent=answer; el.classList.remove("hidden");
+  } catch(e) {
+    var el = document.getElementById("ai-answer");
+    el.textContent="Error: "+e.message; el.classList.remove("hidden");
+  }
+  btn.textContent="Ask"; btn.disabled=false;
+}
+
+loadData();
+</script>
+</body>
+</html>
